@@ -1,0 +1,102 @@
+/*
+ * Graph.h
+ *
+ *  Created on: Oct 15, 2017
+ *      Author: apple
+ */
+
+#ifndef GRAPH_H_
+#define GRAPH_H_
+
+#include <iostream>
+#include <array>
+#include <vector>
+
+template <int vertex>
+class Graph
+{
+private:
+	std::array<std::array<double,vertex>,vertex> data;
+	int vertice;
+	int edges;
+	bool directed;
+	double max;
+public:
+	Graph(int e_edges,bool e_directed,double e_max) : vertice(vertex),edges(e_edges),directed(e_directed),max(e_max)
+	{
+		for(int i = 0; i < data.size(); i++)
+			for(int j = 0; j < data[0].size(); j++)
+				if(i != j)
+					data[i][j] = max;
+				else
+					data[i][j] = 0;
+		if(directed)
+		{
+			for(int i = 1; i <= edges; i++)
+			{
+				std::cout << "The " << i << "th edge:" << std::endl;
+				int a,b;
+				double value;
+				std::cin >> a >> b >> value;
+				data[a][b] = value;
+			}
+		}else
+		{
+			for(int i = 1; i <= edges; i++)
+			{
+				std::cout << "The " << i << "th edge:" << std::endl;
+				int a,b;
+				double value;
+				std::cin >> a >> b >> value;
+				data[a][b] = value;
+				data[b][a] = value;
+			}
+		}
+	}
+
+	void print() const
+	{
+		for(int i = 0; i < vertice; i++)
+		{
+			std::cout << std::endl;
+			for(int j = 0; j < vertice; j++)
+				std::cout << data[i][j] << "  ";
+		}
+	}
+
+	double FindShortestPath(int first,int last)
+	{
+		std::vector<int> X;
+		std::vector<int> Y;
+		std::array<double,vertex> ShortestLength;
+		X.push_back(first);
+		for(int i = 0; i < vertice; i++)
+			if(i != first)
+				Y.push_back(i);
+		for(int i = 0; i < vertice; i++)
+			ShortestLength[i] = data[first][i];
+		while(!Y.empty() && std::find(Y.begin(),Y.end(),last) != Y.end())
+		{
+			int index = 0, current_value = max;
+			for(int i = 0; i < vertice; i++)
+			{
+				if(ShortestLength[i] != 0 && ShortestLength[i] < current_value)
+				{
+					current_value = ShortestLength[i];
+					index = i;
+				}
+			}
+			X.push_back(index);
+			Y.erase(std::find(Y.begin(),Y.end(),index));
+			for(auto it = Y.begin(); it != Y.end(); it++)
+				if(data[index][*it] != max)
+					ShortestLength[*it] = ShortestLength[index] + data[index][*it];
+		}
+		return ShortestLength[last];
+	}
+
+};
+
+
+
+#endif /* GRAPH_H_ */

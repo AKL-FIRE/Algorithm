@@ -1,0 +1,44 @@
+/*
+ * Algorithm.hpp
+ *
+ *  Created on: Oct 3, 2017
+ *      Author: apple
+ */
+
+#ifndef ALGORITHM_HPP_
+#define ALGORITHM_HPP_
+
+template <typename T>
+void minmax(int low,int high,T *A,T &min, T &max)
+{
+	if(high - low == 1)
+	{
+		if(A[low] < A[high])
+		{
+			min = A[low];
+			max = A[high];
+		}else
+		{
+			max = A[low];
+			min = A[high];
+		}
+	}else
+	{
+		int mid = (low + high) / 2;
+		T x1,y1,x2,y2;
+		minmax(low,mid,A,x1,y1);
+		minmax(mid+1,high,A,x2,y2);
+		if(x1 < x2)
+			min = x1;
+		else
+			min = x2;
+		if(y1  < y2)
+			max = y2;
+		else
+			max = y1;
+	}
+}
+
+
+
+#endif /* ALGORITHM_HPP_ */

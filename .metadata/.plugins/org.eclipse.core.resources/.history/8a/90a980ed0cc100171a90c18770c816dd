@@ -1,0 +1,272 @@
+/*
+ * main.cpp
+ *
+ *  Created on: Oct 28, 2017
+ *      Author: apple
+ */
+
+#include <iostream>
+#include <vector>
+
+enum Action {Top,Bottom,Left,Right,Init}; //定义操作集
+
+class Data
+{
+
+public:
+	int data[3][3];
+	Data(int pdata[3][3],int px,int py,Action act) : x(px), y(py), Last_act(act)
+	{
+		for(int i = 0;i < 3; i++)
+			for(int j = 0;j < 3; j++)
+				data[i][j] = pdata[i][j];
+	}
+	Action getAction() const {return Last_act;}
+	int getX() const {return x;}
+	int getY() const {return y;}
+	Data& operator=(const Data &src) //赋值运算符重载，用于vector中erase删除元素的赋值操作
+	{
+		for(int i = 0;i < 3; i++)
+			for(int j = 0;j < 3; j++)
+				data[i][j] = src.data[i][j];
+		x = src.getX();
+		y = src.getY();
+		Last_act = src.getAction();
+		return *this;
+	}
+	void move(Action act)
+	{
+		switch(act)
+		{
+		case Top:
+			std::swap(data[x][y],data[--x][y]);
+			Last_act = Top;
+			break;
+		case Bottom:
+			std::swap(data[x][y],data[++x][y]);
+			Last_act = Bottom;
+			break;
+		case Left:
+			std::swap(data[x][y],data[x][--y]);
+			Last_act = Left;
+			break;
+		case Right:
+			std::swap(data[x][y],data[x][++y]);
+			Last_act = Right;
+			break;
+		}
+	}
+private:
+	int x,y;
+	Action Last_act;
+};
+
+class Node
+{
+public:
+	Node *parent;
+	int depth;
+	int pathcost;
+	Data data;
+	int fn;
+
+	Node(Node *pparent,int pdepth,int ppathcost,int hn,Data &pdata) : data(pdata)
+	{
+		parent = pparent;
+		depth = pdepth;
+		pathcost = ppathcost;
+		fn = hn;
+	}
+
+	Node& operator=(const Node& src)  //赋值运算符重载，用于vector中erase删除元素的赋值操作
+	{
+		if(this == &src)
+		{
+			return *this;
+		}
+		parent = src.parent;
+		depth = src.depth;
+		pathcost = src.pathcost;
+		data = src.data;
+		fn = src.fn;
+		return *this;
+	}
+
+};
+//用于计算当前节点与目标节点错放的棋子数
+void calculateF(Node &src,Node &dst)
+{
+	int distance = 0;
+	for(int i = 0; i < 3; i++)
+		for(int j = 0; j < 3; j++)
+			if(src.data.data[i][j] != dst.data.data[i][j])
+				distance++;
+	src.fn = distance + src.depth;
+}
+//用于路径的输出
+void print(const Node *aim)
+{
+	if(aim == nullptr)
+		return;
+	for(int i = 0;i < 3;i++)
+	{
+		std::cout << std::endl;
+		for(int j =0;j < 3;j++)
+			std::cout << aim->data.data[i][j] << "  ";
+	}
+	std::cout << std::endl << "````````````````````````````" << std::endl;
+	print(aim->parent);
+}
+//判断两个节点是否相等
+bool equal(const Node &a,const Node &b)
+{
+	for(int i = 0;i < 3; i++)
+		for(int j = 0;j < 3; j++)
+			if(a.data.data[i][j] != b.data.data[i][j])
+				return false;
+	return true;
+}
+//判断节点是否在容器中
+bool IsInVector(Node &src,std::vector<Node> &dst,std::vector<Node>::iterator &InVector)
+{
+	for(auto it = dst.begin(); it != dst.end(); it++)
+	{
+		if(equal(src,*it))
+		{
+			InVector = it;
+			return true;
+		}
+	}
+	return false;
+}
+//扩展后继节点
+bool Expand(Node &source,std::vector<Node> &open, std::vector<Node> &closed,Node &goal)
+{
+	if(equal(source,goal)) //是否达到目标
+	{
+		print(&source);
+		return true;
+	}
+	for(int i = 0; i < 4; i++)
+	{
+		Node temp(&source,source.depth + 1,source.pathcost + 1, source.fn ,source.data);
+		switch(i)
+		{
+		case Top:
+			if(temp.data.getX() != 0)
+			{
+				temp.data.move(Top);
+			}else
+				continue; //若无法移动则跳过后续步骤
+			break;
+		case Bottom:
+			if(temp.data.getX() != 2)
+			{
+				temp.data.move(Bottom);
+			}else
+				continue;
+			break;
+		case Left:
+			if(temp.data.getY() != 0)
+			{
+				temp.data.move(Left);
+			}else
+				continue;
+			break;
+		case Right:
+			if(temp.data.getY() != 2)
+			{
+				temp.data.move(Right);
+			}else
+				continue;
+			break;
+		}
+		calculateF(temp,goal); //计算子节点x的f值
+		std::vector<Node>::iterator old;
+		if(IsInVector(temp,open,old)) //若当前节点temp在open表中
+		{
+			if(temp.depth < old->depth) //当前节点的深度是否小于open表中相同节点的深度，若小于则更新open表中的节点为当前节点
+			{
+				old->depth = temp.depth;
+				old->fn = temp.fn;
+				old->pathcost = temp.pathcost;
+				old->parent = temp.parent;
+			}else //否则open表中节点不需要更新，进入下一次循环
+			{
+				continue;
+			}
+		}else
+		{
+			if(IsInVector(temp,closed,old)) //当前节点temp是否在closed表中
+			{
+				if(temp.depth < old->depth) //当前节点的深度是否小于open表中相同节点的深度，若小于则更新open表中的节点为当前节点
+				{
+					old->depth = temp.depth;
+					old->fn = temp.fn;
+					old->pathcost = temp.pathcost;
+					old->parent = temp.parent;
+					Node NewNode = *old;
+					closed.erase(old); //将old移除closed表
+					open.push_back(NewNode); //将old重新移入open表
+				}else //进入下一次循环
+				{
+					continue;
+				}
+			}else
+			{
+				open.push_back(temp); //若temp既不在open也不在closed中，把它加入open表中
+			}
+		}
+	}
+	return false;
+}
+//寻找具有最小的f值的节点
+std::vector<Node>::iterator minFn(std::vector<Node>& src)
+{
+	int temp = src[0].fn;
+	std::vector<Node>::iterator it;
+	for(auto itor = src.begin(); itor != src.end(); itor++)
+	{
+		if(itor->fn <= temp)
+		{
+			temp = itor->fn;
+			it = itor;
+		}
+	}
+	return it;
+}
+//a*主函数
+void AStarSearch(Node &First,Node &goal)
+{
+	std::vector<Node> open;
+	std::vector<Node> closed;
+	calculateF(First,goal);
+	open.push_back(First);
+	while(!open.empty())
+	{
+		auto bestNode = minFn(open);
+		Node temp = *bestNode;
+		closed.push_back(temp);
+		open.erase(bestNode);
+		if(Expand(closed.back(),open,closed,goal))
+		{
+			std::cout << "Succesful!";
+			return;
+		}
+	}
+	std::cout << "Faile";
+}
+
+int main()
+{
+	int first[3][3] = {{2,8,3},{1,0,4},{7,6,5}};
+	int last[3][3] = {{1,2,3},{8,0,4},{7,6,5}};
+	Data c(first,1,1,Init);
+	Data d(last,1,1,Init);
+	Node a(nullptr,0,0,0,c);
+	Node b(nullptr,0,0,0,d);
+	AStarSearch(a,b);
+}
+
+
+

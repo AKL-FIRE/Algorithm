@@ -1,0 +1,14 @@
+/*
+ * main.cpp
+ *
+ *  Created on: Oct 15, 2017
+ *      Author: apple
+ */
+
+#include "Graph.h"
+
+int main()
+{
+	Graph<4>* a = new Graph<4> (3,false,65500);
+
+}

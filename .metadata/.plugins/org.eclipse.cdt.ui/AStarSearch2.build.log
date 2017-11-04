@@ -1,0 +1,43 @@
+11:04:54 **** Incremental Build of configuration Debug for project AStarSearch2 ****
+make all 
+Building file: ../main.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main.d" -MT"main.o" -o "main.o" "../main.cpp"
+../main.cpp:42:30: warning: unsequenced modification and access to 'x' [-Wunsequenced]
+                        std::swap(data[x][y],data[--x][y]);
+                                       ~          ^
+../main.cpp:46:30: warning: unsequenced modification and access to 'x' [-Wunsequenced]
+                        std::swap(data[x][y],data[++x][y]);
+                                       ~          ^
+../main.cpp:50:33: warning: unsequenced modification and access to 'y' [-Wunsequenced]
+                        std::swap(data[x][y],data[x][--y]);
+                                          ~          ^
+../main.cpp:54:33: warning: unsequenced modification and access to 'y' [-Wunsequenced]
+                        std::swap(data[x][y],data[x][++y]);
+                                          ~          ^
+../main.cpp:39:10: warning: enumeration value 'Init' not handled in switch [-Wswitch]
+                switch(act)
+                       ^
+../main.cpp:39:10: note: add missing switch cases
+                switch(act)
+                       ^
+../main.cpp:132:6: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto it = dst.begin(); it != dst.end(); it++)
+            ^
+../main.cpp:228:6: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto itor = src.begin(); itor != src.end(); itor++)
+            ^
+../main.cpp:247:3: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                auto bestNode = minFn(open);
+                ^
+8 warnings generated.
+Finished building: ../main.cpp
+ 
+Building target: AStarSearch2
+Invoking: MacOS X C++ Linker
+g++  -o "AStarSearch2"  ./main.o   
+Finished building target: AStarSearch2
+ 
+
+11:04:55 Build Finished (took 581ms)
+

@@ -1,0 +1,26 @@
+14:41:51 **** Incremental Build of configuration Debug for project Graph ****
+make all 
+Building file: ../main.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main.d" -MT"main.o" -o "main.o" "../main.cpp"
+In file included from ../main.cpp:8:
+../Graph.h:81:8: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                        for(auto it = Y.begin(); it != Y.end(); it++)
+                            ^
+../Graph.h:91:8: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                        for(auto it = Y.begin(); it != Y.end(); it++)
+                            ^
+../Graph.h:97:7: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                for(auto it = X.begin() + 1; it != X.end(); it++)
+                    ^
+3 warnings generated.
+Finished building: ../main.cpp
+ 
+Building target: Graph
+Invoking: MacOS X C++ Linker
+g++  -o "Graph"  ./main.o   
+Finished building target: Graph
+ 
+
+14:41:51 Build Finished (took 558ms)
+

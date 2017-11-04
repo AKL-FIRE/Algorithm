@@ -1,0 +1,74 @@
+/*
+ * Graph.h
+ *
+ *  Created on: Oct 15, 2017
+ *      Author: apple
+ */
+
+#ifndef GRAPH_H_
+#define GRAPH_H_
+
+#include <iostream>
+#include <array>
+#include <vector>
+
+template <int vertex>
+class Graph
+{
+private:
+	std::array<std::array<double,vertex>,vertex> data;
+	int vertice;
+	int edges;
+	bool directed;
+public:
+	Graph(int e_edges,bool e_directed,double max) : vertice(vertex),edges(e_edges),directed(e_directed)
+	{
+		for(int i = 0; i < data.size(); i++)
+			for(int j = 0; j < data[0].size(); j++)
+				data[i][j] = max;
+		if(directed)
+		{
+			for(int i = 1; i <= edges; i++)
+			{
+				std::cout << "The " << i << "th edge:" << std::endl;
+				int a,b;
+				double value;
+				std::cin >> a >> b >> value;
+				data[a][b] = value;
+			}
+		}else
+		{
+			for(int i = 1; i <= edges; i++)
+			{
+				std::cout << "The " << i << "th edge:" << std::endl;
+				int a,b;
+				double value;
+				std::cin >> a >> b >> value;
+				data[a][b] = value;
+				data[b][a] = value;
+			}
+		}
+	}
+
+	void print() const
+	{
+		for(int i = 0; i < vertice; i++)
+		{
+			std::cout << std::endl;
+			for(int j = 0; j < vertice; j++)
+				std::cout << data[i][j] << "  ";
+		}
+	}
+
+	void FindShortestPath(int first,int last)
+	{
+		std::vector<int> X;
+		std::vector<int> Y;
+		std::array<double,vertice> ShortestLength;
+		X.
+	}
+};
+
+
+
+#endif /* GRAPH_H_ */
