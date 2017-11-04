@@ -199,7 +199,7 @@ bool Expand(Node &source,std::vector<Node> &open, std::vector<Node> &closed,Node
 		{
 			if(IsInVector(temp,closed,old)) //当前节点temp是否在closed表中
 			{
-				if(temp.depth < old->depth) //当前节点的深度是否小于open表中相同节点的深度，若小于则更新open表中的节点为当前节点
+				if(temp.depth < old->depth) //当前节点的深度是否小于closed表中相同节点的深度，若小于则更新closed表中的节点为当前节点
 				{
 					old->depth = temp.depth;
 					old->fn = temp.fn;
